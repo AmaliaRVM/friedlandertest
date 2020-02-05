@@ -38,6 +38,30 @@
   font-size: 20px;
   padding: 6px; */
 } 
+.buttons{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+#plusButton {
+  margin: 5px;
+  padding: 10px;
+  border: #282c34;
+  background-color: #282c34;
+}
+.fa-plus {
+  color: #F9F9F9;
+}
+#minusButton {
+  margin: 5px;
+  padding: 10px;
+  border: #282c34;
+  background-color: #282c34;
+}
+.fa-minus {
+  color: #F9F9F9;
+}
 #introText{
   font-size: 15px;
   letter-spacing: 2px;
@@ -152,6 +176,18 @@ input[type=text]{
 @media screen and (max-width: 450px) {
   .container {
     display: block;
+  }
+  #plusButton{
+    padding: 5px;
+  }
+  #minusButton{
+    padding: 5px;
+  }
+  .fa-plus{
+    font-size: 10px;
+  }
+  .fa-minus{
+    font-size: 10px;
   }
   .cardContainer{
     padding: 0;
