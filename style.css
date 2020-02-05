@@ -153,10 +153,13 @@ input[type=text]{
   .container {
     display: block;
   }
+  .cardContainer{
+    padding: 0;
+  }
   .infoContainer{
-    width: 300px;
     text-align: left;
     height: auto;
+    padding: 8px;
   }
   #introText{
     font-size: 10px;
