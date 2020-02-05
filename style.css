@@ -171,5 +171,8 @@ input[type=text]{
     min-height: 16vh;
     margin: 0 auto;
   }
+  .paintingContainer{
+    padding-top: 5px;
+  }
 }
 
