@@ -137,7 +137,7 @@ updateAll = function(info, button){
     console.log(button.getAttribute('mycurrentpage'))
 };
 
-button.addEventListener('click', function(event){
+searchBar.addEventListener('keyup', function(event){
     event.preventDefault();
     var elem = document.getElementsByClassName('cardContainer');
     console.log(elem.length)
