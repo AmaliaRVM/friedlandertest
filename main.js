@@ -7,6 +7,9 @@ const app = document.getElementById('root')
 const container = document.createElement('div')
 container.setAttribute('class', 'container')
 
+//Append
+app.appendChild(container)
+
 //Top Button Function
 const topButton = document.getElementById("topButton")
 window.onscroll = function () {scrollFunction()};
@@ -24,24 +27,23 @@ function topFunction() {
     document.documentElement.scrollTop = 0;
 }
 
-//Append
-app.appendChild(container)
 
-
-
-
+//AaddsubOne Function
 function addsubOne(what) {
-    var wholepath = button.getAttribute('mycurrentpage')
-    console.log(wholepath)
+    var num = button.getAttribute('currentpagenumber')
     if ( what == 'plus') {
-        var number = parseInt(wholepath.split("page=")[1])+1;
+        num = parseInt(num)+1;
     } else if (what === 'minus') {
-        var number = parseInt(wholepath.split("page=")[1])-1;
+        num = parseInt(num)-1;
+    }
+    if (num > button.getAttribute('lastpage')) {
+        num = 1
+    } else if (num < 1) {
+        num = button.getAttribute('lastpage')
     }
 
-        
-    console.log(number)
-    wholepath = wholepath.split("page=")[0]+'page='+number.toString();
+    wholepath = button.getAttribute('mycurrentpage').split("page=")[0]+'page='+ num.toString();
+    
     // get the new api url 
     var elem = document.getElementsByClassName('cardContainer');
     console.log(elem.length)
@@ -51,10 +53,11 @@ function addsubOne(what) {
         elem[0].parentNode.removeChild(elem[0])}
     request.open('GET',wholepath, true)
     request.send() 
-    button.setAttribute('mycurrentpage', wholepath)
+    //button.setAttribute('mycurrentpage', wholepath)
     
     // do all the info.data stuff as already done twice before
 }
+
 
 //For the API function
 function infoData(myinfo){
@@ -93,15 +96,16 @@ function infoData(myinfo){
     })
 }
 
-//Request
+//First Request
 var request = new XMLHttpRequest()
 
 request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
 
 request.onload = function() {  
     // Begin accessing JSON data here 
-var info = JSON.parse(this.response)
-
+    var info = JSON.parse(this.response)
+    updateAll(info, button)
+    console.log('in request '+ button.getAttribute('currentpagenumber'))
     if (request.status >= 200 && request.status < 400) {
         infoData(info);
     } else {
@@ -109,13 +113,29 @@ var info = JSON.parse(this.response)
     }
 }  
 
-// Send request
-request.send() 
 
 //Search Form
 const searchBar = document.querySelector("input");
 const button = document.querySelector("button");
+
+// Send request
+request.send() 
+
+
 button.setAttribute('mycurrentpage', 'https://friedlander.kikirpa.be/api/v1/works?page=1' )
+console.log(button.getAttribute('mycurrentpage'))
+updateAll = function(info, button){
+    button.setAttribute('mycurrentpage', info.meta.path);
+    if (button.getAttribute('mycurrentpage').search('page=') < 0) {
+        button.setAttribute('mycurrentpage', info.meta.path+'?page=1');
+    }
+    button.setAttribute('currentpagenumber', info.meta.current_page);
+    button.setAttribute('lastpage', info.meta.last_page);
+    button.setAttribute('firstpainting', info.meta.from);
+    button.setAttribute('lastpainting', info.meta.to);
+    button.setAttribute('totalnumber', info.meta.total);
+    console.log(button.getAttribute('mycurrentpage'))
+};
 
 button.addEventListener('click', function(event){
     event.preventDefault();
@@ -127,17 +147,20 @@ button.addEventListener('click', function(event){
         elem[0].parentNode.removeChild(elem[0])}
     console.log(request);
     var request2 = new XMLHttpRequest();
-    this.setAttribute('mycurrentpage', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchBar.value+'&page=1' )
+    
+    //this.setAttribute('mycurrentpage', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchBar.value+'&page=1' )
     request2.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchBar.value, true)
     console.log(request2);
     request2.onload = function() { 
         console.log('Hellooooooooooooooooooooooooooooooooo');
     // Begin accessing JSON data here
     var info = JSON.parse(this.response);
-    
+    updateAll(info, button);
     console.log(request2.status);
     if (request2.status >= 200 && request2.status < 400) {
         infoData(info);
+        console.log(info.meta.current_page)
+        console.log('in search', button.getAttribute('mycurrentpage'))
     } else {
         console.log('error')
     }
@@ -150,13 +173,6 @@ console.log('at the end')
 
 
 
-/* fetch('https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchBar)
-    .then(response => {
-        return response.json()
-    })
-    .then((jsonResponse) => {
-        console.log(jsonResponse.data)
-    }); */
 
 
     
