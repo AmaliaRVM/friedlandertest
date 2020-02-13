@@ -18,10 +18,15 @@
             </h2>
             <p id="introText">Kikirpa - studiecentrum vlaamse primitieven</p>
         </div>
-        <form id="searchPaintings">
-            <input type="text" placeholder="Search Title">
-            <button id="btn">Search</button>
-        </form>
+        <div id="mainContainer">
+            <div id="mainSearch">
+                <form id="searchPaintings">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search Title">
+                    <!-- <button id="btn">Search</button> -->
+                </form>
+            </div>
+        </div>
         <div class="buttons">
             <button onclick="addsubOne('minus')" id="minusButton" title="-">
                 <i class="fas fa-minus"></i>
@@ -33,6 +38,7 @@
         <button onclick="topFunction()" id="topButton" title="to the top">
             <i class="fas fa-arrow-up"></i>
         </button>
+        
     </div>
     <script src='main.js'></script>
 </body>

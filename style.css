@@ -4,24 +4,25 @@
   font-family:'Noto Sans HK', sans-serif;
 }
 
-.totalContainer{
-  background-color: aqua;
-}
-
-.container {
+#mainContainer {
   width: 80vw;
   margin: 0 auto;
+  padding-top: 20px;
+  display: flex;
+}
+.artContainer {
+  width: 80vw;
   font-size: 12px;
   display: grid;
-  grid-template-columns: repeat(4, 25%);
+  grid-template-columns: repeat(3, 34%);
   /* grid-template-rows: repeat(4, auto); */
   /* font-family:'Noto Sans HK', sans-serif; */
 }
 
 #header { 
   background-color: #282c34;
-  min-height: 25vh;
-  width: 80vw;
+  min-height: 18vh;
+  width: 81vw;
   margin: auto;
   margin-top: 2%;
   display: flex;
@@ -39,10 +40,9 @@
   padding: 6px; */
 } 
 .buttons{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+  position: fixed;
+  bottom: 10px;
+  right: 15px;
 }
 #plusButton {
   margin: 5px;
@@ -99,10 +99,14 @@ img {
 }
 #searchPaintings {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 18px;
+  margin-top:  18px;
+  margin-right: 12px;
+  margin-left: 0;
+}
+.fa-search{
+  padding-right: 9px;
+  font-size: 15px;
+  color: #282c34;
 }
 input[type=text]{
   width: 30%;
@@ -127,17 +131,17 @@ input[type=text]{
 #topButton{
   display: none;
   position: fixed;
-  bottom: 20px;
-  right: 30px;
+  bottom: 87px;
+  right: 20px;
   z-index: 99;
-  font-size: 25px;
+  font-size: 16px;
   border: none;
   outline: none;
   background-color: #282c34;
   color: #F9F9F9;
   cursor: pointer;
   border-radius: 20%;
-  padding: 12px;
+  padding: 10px;
   font-family:'Noto Sans HK', sans-serif;
 }
 

@@ -1,14 +1,19 @@
 //Elements
 
-//Root
+//Root & main Containers
 const app = document.getElementById('root')
+const mainContainer = document.getElementById('mainContainer')
+const mainSearch = document.getElementById('mainSearch')
 
-//Main container
-const container = document.createElement('div')
-container.setAttribute('class', 'container')
+//art container
+const artContainer = document.createElement('div')
+artContainer.setAttribute('class', 'artContainer')
 
 //Append
-app.appendChild(container)
+app.appendChild(mainContainer)
+mainContainer.appendChild(mainSearch)
+mainContainer.appendChild(artContainer)
+
 
 //Top Button Function
 const topButton = document.getElementById("topButton")
@@ -86,7 +91,7 @@ function infoData(myinfo){
         painting.src = works.image_url
 
 
-        container.appendChild(cardContainer)
+        artContainer.appendChild(cardContainer)
         cardContainer.appendChild(paintingContainer)
         cardContainer.appendChild(infoContainer)
         infoContainer.appendChild(title)
