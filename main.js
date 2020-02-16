@@ -35,28 +35,36 @@ function topFunction() {
 
 //AaddsubOne Function
 function addsubOne(what) {
-    var num = button.getAttribute('currentpagenumber')
+    var num = button.getAttribute('firstpage')
     if ( what == 'plus') {
-        num = parseInt(num)+1;
-    } else if (what === 'minus') {
-        num = parseInt(num)-1;
+        num = button.getAttribute('nextpage')
+        console.log(button.getAttribute('nextpage'))
+    } else if (what == 'minus') {
+        num = button.getAttribute('prevpage')
+        console.log(button.getAttribute('prevpage'))
     }
-    if (num > button.getAttribute('lastpage')) {
-        num = 1
-    } else if (num < 1) {
-        num = button.getAttribute('lastpage')
+    console.log(' WE WANT THIS', num, !num)
+    if (num == 'null') {
+        console.log('it found null')
+        if  ( what == 'plus') {
+            num = button.getAttribute('firstpage')
+        } else if (what == 'minus'){
+            num = button.getAttribute('lastpage')
+        }
     }
 
-    wholepath = button.getAttribute('mycurrentpage').split("page=")[0]+'page='+ num.toString();
+    wholepath = button.getAttribute('nextpage')/* .split("page=")[0]+'page='+ num.toString(); */
+    console.log(wholepath)
     
-    // get the new api url 
+    // delete content of page 
     var elem = document.getElementsByClassName('cardContainer');
     console.log(elem.length)
     const myoriglen = elem.length
     for (myi = 0;  myi < myoriglen; myi++) {
         console.log(myi)
         elem[0].parentNode.removeChild(elem[0])}
-    request.open('GET',wholepath, true)
+    // get the new api url    
+    request.open('GET',num, true)
     request.send() 
     //button.setAttribute('mycurrentpage', wholepath)
     
@@ -68,7 +76,6 @@ function addsubOne(what) {
 function infoData(myinfo){
     myinfo.data.forEach(works => {
         
-
         const cardContainer = document.createElement('div')
         cardContainer.setAttribute('class', 'cardContainer')
 
@@ -87,9 +94,12 @@ function infoData(myinfo){
         const material = document.createElement('p')
         material.textContent = works.material
 
+        const enp = document.createElement('p')
+        enp.setAttribute('id', 'enp')
+        enp.textContent = 'ENP '+(works.reference)
+
         const painting = document.createElement('img')
         painting.src = works.image_url
-
 
         artContainer.appendChild(cardContainer)
         cardContainer.appendChild(paintingContainer)
@@ -97,6 +107,7 @@ function infoData(myinfo){
         infoContainer.appendChild(title)
         infoContainer.appendChild(artist)
         infoContainer.appendChild(material) 
+        infoContainer.appendChild(enp)
         paintingContainer.appendChild(painting)
     })
 }
@@ -110,7 +121,7 @@ request.onload = function() {
     // Begin accessing JSON data here 
     var info = JSON.parse(this.response)
     updateAll(info, button)
-    console.log('in request '+ button.getAttribute('currentpagenumber'))
+    console.log('in request '+ button.getAttribute('firstpage'))
     if (request.status >= 200 && request.status < 400) {
         infoData(info);
     } else {
@@ -118,14 +129,12 @@ request.onload = function() {
     }
 }  
 
+// Send request
+request.send() 
 
 //Search Form
 const searchBar = document.querySelector("input");
 const button = document.querySelector("button");
-
-// Send request
-request.send() 
-
 
 button.setAttribute('mycurrentpage', 'https://friedlander.kikirpa.be/api/v1/works?page=1' )
 console.log(button.getAttribute('mycurrentpage'))
@@ -134,9 +143,10 @@ updateAll = function(info, button){
     if (button.getAttribute('mycurrentpage').search('page=') < 0) {
         button.setAttribute('mycurrentpage', info.meta.path+'?page=1');
     }
-    button.setAttribute('currentpagenumber', info.meta.current_page);
-    button.setAttribute('lastpage', info.meta.last_page);
-    button.setAttribute('firstpainting', info.meta.from);
+    button.setAttribute('firstpage', info.links.first);
+    button.setAttribute('nextpage', info.links.next);
+    button.setAttribute('prevpage', info.links.prev);
+    button.setAttribute('lastpage', info.links.last);
     button.setAttribute('lastpainting', info.meta.to);
     button.setAttribute('totalnumber', info.meta.total);
     console.log(button.getAttribute('mycurrentpage'))
@@ -176,6 +186,110 @@ console.log('at the end')
 })
 
 
+//Artist Request
+var request3 = new XMLHttpRequest()
+
+request3.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
+
+request3.onload = function () {  
+    console.log(request);
+    // Begin accessing JSON data here 
+    var info = JSON.parse(this.response)
+        console.log(info);
+    if (request3.status >= 200 && request3.status < 400) {
+        console.log(info.filterdata.artists);
+    } else {
+        console.log('error')
+    }
+
+    var select = document.getElementById("artist-select");
+    myObject = info.filterdata.artists
+    console.log(myObject[1].name)
+
+    for(number in myObject)  {
+        option = document.createElement('OPTION'),
+        txt = document.createTextNode(myObject[number].name);
+        option.appendChild(txt);
+        option.setAttribute('value', myObject[number].id);
+        select.insertBefore(option, select.lastChild);    
+    }
+}  
+request3.send() 
+
+function artistFunction(a) {
+
+    select = document.getElementById("artist-select")= true;
+    select = a.value;
+    console.log(select)
+
+    request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[artist_id]='+a.value, true)
+
+    request.onload = function() {  
+        console.log(request);
+        // Begin accessing JSON data here 
+        var info = JSON.parse(this.response)
+        if (request.status >= 200 && request.status < 400) {
+            info.data.forEach(works => {
+                console.log(works)
+            })
+        } else {
+            console.log('error')
+        }   
+    }
+    request.send() 
+}
+
+//Material Request
+var request4 = new XMLHttpRequest()
+
+request4.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
+
+request4.onload = function() {  
+    console.log(request4);
+    // Begin accessing JSON data here 
+    var info = JSON.parse(this.response)
+    if (request4.status >= 200 && request4.status < 400) {
+        console.log(info.filterdata.materials);
+    } else {
+        console.log('error')
+    }
+
+    var selectMaterial = document.getElementById("material-select");
+    myMaterials = info.filterdata.materials
+    console.log(myMaterials[1].name)
+
+    for(number in myMaterials)  {
+        option = document.createElement('OPTION'),
+        txt = document.createTextNode(myMaterials[number].name);
+        option.appendChild(txt);
+        option.setAttribute('value', myMaterials[number].id);
+        selectMaterial.insertBefore(option, selectMaterial.lastChild);   
+    }
+}  
+request4.send() 
+
+function materialFunction(a) {
+
+    selectMaterial = document.getElementById("material-select")= true;
+    selectMaterial = a.value;
+    console.log(selectMaterial)
+
+    request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[material_id]='+a.value, true)
+
+    request.onload = function() {  
+        console.log(request);
+        // Begin accessing JSON data here 
+        var info = JSON.parse(this.response)
+        if (request.status >= 200 && request.status < 400) {
+            info.data.forEach(works => {
+                console.log(works)
+            })
+        } else {
+            console.log('error')
+        }    
+    }
+    request.send() 
+}
 
 
 
