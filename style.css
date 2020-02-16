@@ -39,10 +39,10 @@
   font-size: 20px;
   padding: 6px; */
 } 
-#title{
+/* #title{
   color: red;
   font-family:'Noto Sans HK', sans-serif;
-}
+} */
 .buttons{
   position: fixed;
   bottom: 10px;
@@ -99,10 +99,21 @@ img {
   grid-row: 2;
   justify-self: self-start;
   align-self: flex-end;
-  font-size: 12px;
+  font-size: 14px;
+}
+#title {
+  margin-top: 1.5rem;
+  font-size: 18px;
+  font-weight: bold;
+  font-family:'Noto Sans HK', sans-serif;
+}
+#artist {
+  font-size: 14px;
+  font-family:'Noto Sans HK', sans-serif;
+  font-weight: bold;
 }
 #enp {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 /* All the search style */
@@ -143,7 +154,17 @@ input[type=text]{
 
 .selectBox select {
   width: 100%;
-  font-weight: bold;
+  background-color: #F9F9F9;
+  color: #282c34;
+  box-shadow: 1px 2px 5px #282c34;
+  filter: opacity(0.8);
+  font-family:'Noto Sans HK', sans-serif;
+  letter-spacing: 1px;
+  grid-column: 1;
+  grid-row: 2;
+  margin-bottom: 20px;
+  /* width: 192.6px; */
+  padding: 5px;
 }
 
 .overSelect {
@@ -153,26 +174,51 @@ input[type=text]{
   top: 0;
   bottom: 0;
 }
-.form-check {
+.form-check{
+  margin: 2px;
+  font-size: 15px;
+}
+.form-check-label {
   font-family:'Noto Sans HK', sans-serif;
   padding: 2px;
   color: #282c34;
   
 }
-
-#checkboxes {
+#checkboxesArtist {
   display: none;
-  border: 1px #dadada solid;
+  margin-bottom: 10px;
 }
-
-#checkboxes label {
-  display: block;
+#checkboxesMaterial {
+  display: none;
+  margin-bottom: 10px;
   
-
+} 
+#checkboxesArtist label {
+  display: block;
 }
+#checkboxesMaterial label {
+  display: block;
+}
+#checkboxesArtist label:hover {
+  background-color: #F9F9F9;
+}
+#checkboxesMaterial label:hover {
+  background-color: #F9F9F9;
+}
+#getButton {
+  width: 80%;
+  background-color: #F9F9F9;
+  color: #282c34;
+  box-shadow: 1px 2px 5px #282c34;
+  filter: opacity(0.8);
+  font-family:'Noto Sans HK', sans-serif;
+  letter-spacing: 1px;
+  grid-column: 1;
+  grid-row: 4;
+  margin-bottom: 20px;
+  /* width: 192.6px; */
+  padding: 5px;
 
-#checkboxes label:hover {
-  background-color: #1e90ff;
 }
 
 /* #artist-select{
@@ -188,9 +234,6 @@ input[type=text]{
   width: 192.6px;
   padding: 5px;
 } */
-
-
-
 
 #btn{
   padding: 5px;

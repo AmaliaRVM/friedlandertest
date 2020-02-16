@@ -29,13 +29,24 @@
                 </form>
                 <form>
                     <div class="multiselect">
-                        <div class="selectBox" onclick="showCheckboxes()">
+                        <div class="selectBox" onclick="showCheckboxes('artist')">
                             <select>
-                                <option>Select an option</option>
+                                <option>Select Artist</option>
                             </select>
                             <div class="overSelect"></div>
                         </div>
-                        <div id="checkboxes"></div>
+                        <div id="checkboxesArtist"></div>
+                    </div>
+                </form>
+                <form>
+                    <div class="multiselect">
+                        <div class="selectBox" onclick="showCheckboxes('material')">
+                            <select>
+                                <option>Select Material</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxesMaterial"></div>
                     </div>
                 </form>
                 <button id="getButton" onclick="showMeAll()">GET</button>

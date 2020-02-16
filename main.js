@@ -15,9 +15,10 @@ mainContainer.appendChild(mainSearch)
 mainContainer.appendChild(artContainer)
 
 // for the checkboxlist
-var inputArray = [];
-var expanded = false;
-
+var inputArrayArtist = [];
+var inputArrayMaterial = [];
+var expandedArtist = false;
+var expandedMaterial = false;
 
 //Top Button Function
 const topButton = document.getElementById("topButton")
@@ -93,6 +94,7 @@ function infoData(myinfo){
         title.setAttribute('id', 'title')
         title.textContent = works.title
         const artist = document.createElement('h3')
+        artist.setAttribute('id', 'artist')
         artist.textContent = works.artist
         const material = document.createElement('p')
         material.textContent = works.material
@@ -114,10 +116,18 @@ function infoData(myinfo){
 }
 
 // To generate artist checkbox list
-function artistInput(myArtist){
-    var myDiv = document.getElementById("checkboxes");
-    inputArray = [];
-    for(number in myArtist)  {
+function artistInput(myObject, what){
+    if (what == 'artist') {
+        var myDiv = document.getElementById("checkboxesArtist");
+    } else if (what == 'material') {
+        var myDiv = document.getElementById("checkboxesMaterial");
+    }
+    if (what == 'artist') {
+        inputArrayArtist = [];
+    } else if (what == 'material') {
+        inputArrayMaterial = [];
+    }
+    for(number in myObject)  {
         var formcheck = document.createElement("div");
         formcheck.setAttribute('class', 'form-check');
         input = document.createElement('input');
@@ -125,13 +135,17 @@ function artistInput(myArtist){
         label = document.createElement('label');
         label.setAttribute('class', "form-check-label");
         input.type = "checkbox";
-        txt = document.createTextNode(myArtist[number].name + '  ('+myArtist[number].count+')');
-        input.value = myArtist[number].id;
+        txt = document.createTextNode(myObject[number].name + '  ('+myObject[number].count+')');
+        input.value = myObject[number].id;
         myDiv.appendChild(formcheck);
         formcheck.appendChild(input);
         formcheck.appendChild(label);
         label.appendChild(txt);
-        inputArray.push(input);
+        if  (what == 'artist') {
+            inputArrayArtist.push(input);
+        } else if (what == 'material') {
+            inputArrayMaterial.push(input);
+        }
         // console.log(input.checked);
     }
 }
@@ -139,35 +153,67 @@ function artistInput(myArtist){
 // to extract which artists are checked
 function showMeAll() {
     var newpage = button.getAttribute('mycurrentpage')
-    var startidx = newpage.indexOf('filter%5Bartist_id%5D=')
-    var substring = newpage.slice(startidx, -1)
-    var lastidx = substring.indexOf('&')
-    substring = substring.slice(0, lastidx)
-    console.log('original ', newpage)
-    console.log('idx where filter[artist_id] starts', startidx)
-    console.log('to delete: ', substring)
-    newpage = newpage.replace(substring,'')
-    console.log('new', newpage)
+    // var startidx = newpage.indexOf('filter%5Bartist_id%5D=')
+    // var substring = newpage.slice(startidx, -1)
+    // var lastidx = substring.indexOf('&')
+    // substring = substring.slice(0, lastidx)
+    // console.log('original ', newpage)
+    // console.log('idx where filter[artist_id] starts', startidx)
+    // console.log('to delete: ', substring)
+    // newpage = newpage.replace(substring,'')
+    // console.log('new', newpage)
+
+    // check if there is any filter
 
     if (newpage.includes('?')) {
         newpage = newpage +'&filter[artist_id]='
     } else {
         newpage = newpage +'?filter[artist_id]='
     }
-    
+    // add all the checked artists to the filter string
     var artistList = '';
-    for (x of inputArray) {
+    var artistcount = 0
+    for (x of inputArrayArtist) {
         if (x.checked) {
             artistList = artistList + x.value+ ","
+            artistcount = artistcount + 1
             // console.log('The value is ', x.value)
         }
     }
     newpage = newpage + artistList
+
+    // check if there is any filter 
+    if (newpage.includes('?')) {
+        newpage = newpage +'&filter[material_id]='
+    } else {
+        newpage = newpage +'?filter[material_id]='
+    }
+    
+    var materialList = '';
+    var materialcount = 0
+    for (x of inputArrayMaterial) {
+        if (x.checked) {
+            materialList = materialList + x.value+ ","
+            materialcount = materialcount + 1
+            // console.log('The value is ', x.value)
+        }
+    }
+    newpage = newpage + materialList
+
+    
     console.log('this is the page we look up ', newpage)
     cleanUp();
     request.open('GET', newpage, true)
     // Send request
     request.send()
+    if (materialcount < 11) { 
+        checkboxesMaterial.style.display = "block";
+        expandedMaterial = true;
+    }
+    if (artistcount < 11) {
+        checkboxesArtist.style.display = "block";
+        expandedArtist = true;
+    }
 }
 
 // update of all button information from api-links
@@ -186,14 +232,27 @@ function updateAll(info, button){
 };
 
 
-function showCheckboxes() {
-    var checkboxes = document.getElementById("checkboxes");
-    if (!expanded) {
-        checkboxes.style.display = "block";
-        expanded = true;
-    } else {
-        checkboxes.style.display = "none";
-        expanded = false;
+function showCheckboxes(what) {
+    if (what == 'artist') {
+        var checkboxesArtist = document.getElementById("checkboxesArtist");
+        if (!expandedArtist) {
+            checkboxesArtist.style.display = "block";
+            expandedArtist = true;
+        } else {
+            checkboxesArtist.style.display = "none";
+            expandedArtist = false;
+        }
+
+
+    } else if (what == 'material') {
+        var checkboxesMaterial = document.getElementById("checkboxesMaterial");
+        if (!expandedMaterial) {
+            checkboxesMaterial.style.display = "block";
+            expandedMaterial = true;
+        } else {
+            checkboxesMaterial.style.display = "none";
+            expandedMaterial = false;
+        }
     }
 }
 
@@ -210,11 +269,13 @@ request.onload = function() {
    
     updateAll(info, button)
     var myArtist = info.filterdata.artists
+    var myMaterial = info.filterdata.materials
     // console.log('in request '+ button.getAttribute('firstpage'))
     if (request.status >= 200 && request.status < 400) {
         infoData(info);
         // console.log('in request', info.filterdata.artists);
-        artistInput(myArtist);
+        artistInput(myArtist, 'artist');
+        artistInput(myMaterial, 'material');
     } else {
         // console.log('error')
     }
