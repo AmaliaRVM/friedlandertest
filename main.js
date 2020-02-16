@@ -14,6 +14,10 @@ app.appendChild(mainContainer)
 mainContainer.appendChild(mainSearch)
 mainContainer.appendChild(artContainer)
 
+// for the checkboxlist
+var inputArray = [];
+var expanded = false;
+
 
 //Top Button Function
 const topButton = document.getElementById("topButton")
@@ -32,20 +36,32 @@ function topFunction() {
     document.documentElement.scrollTop = 0;
 }
 
+// Function to clean content of page 
+function cleanUp(){
+    var elem = document.getElementsByClassName('cardContainer');
+    var myoriglen = elem.length
+    for (myi = 0;  myi < myoriglen; myi++) {
+        elem[0].parentNode.removeChild(elem[0])}
+    var elem = document.getElementsByClassName('form-check');
+    myoriglen = elem.length
+    for (myi = 0;  myi < myoriglen; myi++) {
+        elem[0].parentNode.removeChild(elem[0])}
+}
+
 
 //AaddsubOne Function
 function addsubOne(what) {
     var num = button.getAttribute('firstpage')
     if ( what == 'plus') {
         num = button.getAttribute('nextpage')
-        console.log(button.getAttribute('nextpage'))
+        // console.log(button.getAttribute('nextpage'))
     } else if (what == 'minus') {
         num = button.getAttribute('prevpage')
-        console.log(button.getAttribute('prevpage'))
+        // console.log(button.getAttribute('prevpage'))
     }
-    console.log(' WE WANT THIS', num, !num)
+    // console.log(' WE WANT THIS', num, !num)
     if (num == 'null') {
-        console.log('it found null')
+        // console.log('it found null')
         if  ( what == 'plus') {
             num = button.getAttribute('firstpage')
         } else if (what == 'minus'){
@@ -53,22 +69,13 @@ function addsubOne(what) {
         }
     }
 
-    wholepath = button.getAttribute('nextpage')/* .split("page=")[0]+'page='+ num.toString(); */
-    console.log(wholepath)
+    wholepath = button.getAttribute('nextpage')
     
-    // delete content of page 
-    var elem = document.getElementsByClassName('cardContainer');
-    console.log(elem.length)
-    const myoriglen = elem.length
-    for (myi = 0;  myi < myoriglen; myi++) {
-        console.log(myi)
-        elem[0].parentNode.removeChild(elem[0])}
+    // Clean content of page 
+    cleanUp()
     // get the new api url    
     request.open('GET',num, true)
     request.send() 
-    //button.setAttribute('mycurrentpage', wholepath)
-    
-    // do all the info.data stuff as already done twice before
 }
 
 
@@ -78,26 +85,20 @@ function infoData(myinfo){
         
         const cardContainer = document.createElement('div')
         cardContainer.setAttribute('class', 'cardContainer')
-
         const infoContainer = document.createElement('div')
         infoContainer.setAttribute('class', 'infoContainer')
-
         const paintingContainer = document.createElement('div')
         paintingContainer.setAttribute ('class', 'paintingContainer')
-
         const title = document.createElement('h2')
+        title.setAttribute('id', 'title')
         title.textContent = works.title
-
         const artist = document.createElement('h3')
         artist.textContent = works.artist
-
         const material = document.createElement('p')
         material.textContent = works.material
-
         const enp = document.createElement('p')
         enp.setAttribute('id', 'enp')
         enp.textContent = 'ENP '+(works.reference)
-
         const painting = document.createElement('img')
         painting.src = works.image_url
 
@@ -112,6 +113,92 @@ function infoData(myinfo){
     })
 }
 
+// To generate artist checkbox list
+function artistInput(myArtist){
+    var myDiv = document.getElementById("checkboxes");
+    inputArray = [];
+    for(number in myArtist)  {
+        var formcheck = document.createElement("div");
+        formcheck.setAttribute('class', 'form-check');
+        input = document.createElement('input');
+        input.setAttribute('class', "form-check-input");
+        label = document.createElement('label');
+        label.setAttribute('class', "form-check-label");
+        input.type = "checkbox";
+        txt = document.createTextNode(myArtist[number].name + '  ('+myArtist[number].count+')');
+        input.value = myArtist[number].id;
+        myDiv.appendChild(formcheck);
+        formcheck.appendChild(input);
+        formcheck.appendChild(label);
+        label.appendChild(txt);
+        inputArray.push(input);
+        // console.log(input.checked);
+    }
+}
+
+// to extract which artists are checked
+function showMeAll() {
+    var newpage = button.getAttribute('mycurrentpage')
+    var startidx = newpage.indexOf('filter%5Bartist_id%5D=')
+    var substring = newpage.slice(startidx, -1)
+    var lastidx = substring.indexOf('&')
+    substring = substring.slice(0, lastidx)
+    console.log('original ', newpage)
+    console.log('idx where filter[artist_id] starts', startidx)
+    console.log('to delete: ', substring)
+    newpage = newpage.replace(substring,'')
+    console.log('new', newpage)
+
+    if (newpage.includes('?')) {
+        newpage = newpage +'&filter[artist_id]='
+    } else {
+        newpage = newpage +'?filter[artist_id]='
+    }
+    
+    var artistList = '';
+    for (x of inputArray) {
+        if (x.checked) {
+            artistList = artistList + x.value+ ","
+            // console.log('The value is ', x.value)
+        }
+    }
+    newpage = newpage + artistList
+    console.log('this is the page we look up ', newpage)
+    cleanUp();
+    request.open('GET', newpage, true)
+    // Send request
+    request.send()
+}
+
+// update of all button information from api-links
+function updateAll(info, button){
+    button.setAttribute('mycurrentpage', info.meta.full_path);
+    // if (button.getAttribute('mycurrentpage').search('page=') < 0) {
+        // button.setAttribute('mycurrentpage', info.meta.path+'?page=1');
+    // }
+    button.setAttribute('firstpage', info.links.first);
+    button.setAttribute('nextpage', info.links.next);
+    button.setAttribute('prevpage', info.links.prev);
+    button.setAttribute('lastpage', info.links.last);
+    button.setAttribute('lastpainting', info.meta.to);
+    button.setAttribute('totalnumber', info.meta.total);
+    // console.log(button.getAttribute('mycurrentpage'))
+};
+
+
+function showCheckboxes() {
+    var checkboxes = document.getElementById("checkboxes");
+    if (!expanded) {
+        checkboxes.style.display = "block";
+        expanded = true;
+    } else {
+        checkboxes.style.display = "none";
+        expanded = false;
+    }
+}
+
+
+
 //First Request
 var request = new XMLHttpRequest()
 
@@ -120,12 +207,16 @@ request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
 request.onload = function() {  
     // Begin accessing JSON data here 
     var info = JSON.parse(this.response)
+   
     updateAll(info, button)
-    console.log('in request '+ button.getAttribute('firstpage'))
+    var myArtist = info.filterdata.artists
+    // console.log('in request '+ button.getAttribute('firstpage'))
     if (request.status >= 200 && request.status < 400) {
         infoData(info);
+        // console.log('in request', info.filterdata.artists);
+        artistInput(myArtist);
     } else {
-        console.log('error')
+        // console.log('error')
     }
 }  
 
@@ -135,161 +226,17 @@ request.send()
 //Search Form
 const searchBar = document.querySelector("input");
 const button = document.querySelector("button");
-
 button.setAttribute('mycurrentpage', 'https://friedlander.kikirpa.be/api/v1/works?page=1' )
-console.log(button.getAttribute('mycurrentpage'))
-updateAll = function(info, button){
-    button.setAttribute('mycurrentpage', info.meta.path);
-    if (button.getAttribute('mycurrentpage').search('page=') < 0) {
-        button.setAttribute('mycurrentpage', info.meta.path+'?page=1');
-    }
-    button.setAttribute('firstpage', info.links.first);
-    button.setAttribute('nextpage', info.links.next);
-    button.setAttribute('prevpage', info.links.prev);
-    button.setAttribute('lastpage', info.links.last);
-    button.setAttribute('lastpainting', info.meta.to);
-    button.setAttribute('totalnumber', info.meta.total);
-    console.log(button.getAttribute('mycurrentpage'))
-};
 
 searchBar.addEventListener('keyup', function(event){
     event.preventDefault();
-    var elem = document.getElementsByClassName('cardContainer');
-    console.log(elem.length)
-    const myoriglen = elem.length
-    for (myi = 0;  myi < myoriglen; myi++) {
-        console.log(myi)
-        elem[0].parentNode.removeChild(elem[0])}
-    console.log(request);
-    var request2 = new XMLHttpRequest();
-    
-    //this.setAttribute('mycurrentpage', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchBar.value+'&page=1' )
-    request2.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchBar.value, true)
-    console.log(request2);
-    request2.onload = function() { 
-        console.log('Hellooooooooooooooooooooooooooooooooo');
-    // Begin accessing JSON data here
-    var info = JSON.parse(this.response);
-    updateAll(info, button);
-    console.log(request2.status);
-    if (request2.status >= 200 && request2.status < 400) {
-        infoData(info);
-        console.log(info.meta.current_page)
-        console.log('in search', button.getAttribute('mycurrentpage'))
-    } else {
-        console.log('error')
-    }
-}  
-// Send request
-request2.send()    
-console.log('at the end')   
+    // clean content of page
+    cleanUp()
+    request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchBar.value, true)
+    // Send request
+    request.send()   
 })
 
-
-//Artist Request
-var request3 = new XMLHttpRequest()
-
-request3.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
-
-request3.onload = function () {  
-    console.log(request);
-    // Begin accessing JSON data here 
-    var info = JSON.parse(this.response)
-        console.log(info);
-    if (request3.status >= 200 && request3.status < 400) {
-        console.log(info.filterdata.artists);
-    } else {
-        console.log('error')
-    }
-
-    var select = document.getElementById("artist-select");
-    myObject = info.filterdata.artists
-    console.log(myObject[1].name)
-
-    for(number in myObject)  {
-        option = document.createElement('OPTION'),
-        txt = document.createTextNode(myObject[number].name);
-        option.appendChild(txt);
-        option.setAttribute('value', myObject[number].id);
-        select.insertBefore(option, select.lastChild);    
-    }
-}  
-request3.send() 
-
-function artistFunction(a) {
-
-    select = document.getElementById("artist-select")= true;
-    select = a.value;
-    console.log(select)
-
-    request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[artist_id]='+a.value, true)
-
-    request.onload = function() {  
-        console.log(request);
-        // Begin accessing JSON data here 
-        var info = JSON.parse(this.response)
-        if (request.status >= 200 && request.status < 400) {
-            info.data.forEach(works => {
-                console.log(works)
-            })
-        } else {
-            console.log('error')
-        }   
-    }
-    request.send() 
-}
-
-//Material Request
-var request4 = new XMLHttpRequest()
-
-request4.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
-
-request4.onload = function() {  
-    console.log(request4);
-    // Begin accessing JSON data here 
-    var info = JSON.parse(this.response)
-    if (request4.status >= 200 && request4.status < 400) {
-        console.log(info.filterdata.materials);
-    } else {
-        console.log('error')
-    }
-
-    var selectMaterial = document.getElementById("material-select");
-    myMaterials = info.filterdata.materials
-    console.log(myMaterials[1].name)
-
-    for(number in myMaterials)  {
-        option = document.createElement('OPTION'),
-        txt = document.createTextNode(myMaterials[number].name);
-        option.appendChild(txt);
-        option.setAttribute('value', myMaterials[number].id);
-        selectMaterial.insertBefore(option, selectMaterial.lastChild);   
-    }
-}  
-request4.send() 
-
-function materialFunction(a) {
-
-    selectMaterial = document.getElementById("material-select")= true;
-    selectMaterial = a.value;
-    console.log(selectMaterial)
-
-    request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[material_id]='+a.value, true)
-
-    request.onload = function() {  
-        console.log(request);
-        // Begin accessing JSON data here 
-        var info = JSON.parse(this.response)
-        if (request.status >= 200 && request.status < 400) {
-            info.data.forEach(works => {
-                console.log(works)
-            })
-        } else {
-            console.log('error')
-        }    
-    }
-    request.send() 
-}
 
 
 
