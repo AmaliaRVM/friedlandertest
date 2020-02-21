@@ -1,18 +1,26 @@
 //Elements
 
 //Root & main Containers
-const app = document.getElementById('root')
+const app = document.getElementById('app')
 const mainContainer = document.getElementById('mainContainer')
 const mainSearch = document.getElementById('mainSearch')
+const artContainer = document.getElementById('artContainer')
+const cardContainer = document.getElementsByClassName ('cardContainer')
+const paintingContainer = document.getElementsByClassName("paintingContainer")
+const infoContainer = document.getElementsByClassName("infoContainer")
 
-//art container
-const artContainer = document.createElement('div')
-artContainer.setAttribute('class', 'artContainer')
-
-//Append
 app.appendChild(mainContainer)
 mainContainer.appendChild(mainSearch)
 mainContainer.appendChild(artContainer)
+
+//art container
+/* const artContainer = document.createElement('div') */
+/* artContainer.setAttribute('class', 'artContainer') */
+
+//Append
+/* app.appendChild(mainContainer)
+mainContainer.appendChild(mainSearch)
+mainContainer.appendChild(artContainer) */
 
 // for the checkboxlist
 var inputArrayArtist = [];
@@ -39,7 +47,7 @@ function topFunction() {
 
 // Function to clean content of page 
 function cleanUp(){
-    var elem = document.getElementsByClassName('cardContainer');
+    var elem = document.getElementById('cardContainer');
     var myoriglen = elem.length
     for (myi = 0;  myi < myoriglen; myi++) {
         elem[0].parentNode.removeChild(elem[0])}
@@ -84,34 +92,30 @@ function addsubOne(what) {
 function infoData(myinfo){
     myinfo.data.forEach(works => {
         
-        const cardContainer = document.createElement('div')
+        var test = document.createElement('div')
+        test.setAttribute("class", "card bg-danger")
+        console.log(test)
+        /* const cardContainer = document.createElement('div')
         cardContainer.setAttribute('class', 'cardContainer')
         const infoContainer = document.createElement('div')
         infoContainer.setAttribute('class', 'infoContainer')
         const paintingContainer = document.createElement('div')
-        paintingContainer.setAttribute ('class', 'paintingContainer')
-        const title = document.createElement('h2')
-        title.setAttribute('id', 'title')
-        title.textContent = works.title
-        const artist = document.createElement('h3')
-        artist.setAttribute('id', 'artist')
+        paintingContainer.setAttribute ('class', 'paintingContainer') */
+        /* const artist = document.getElementsByClassName("artist")
         artist.textContent = works.artist
-        const material = document.createElement('p')
+        const material = document.getElementsByClassName("material")
         material.textContent = works.material
-        const enp = document.createElement('p')
-        enp.setAttribute('id', 'enp')
+        const title = document.getElementsByClassName("title")
+        title.textContent = works.title
+        const enp = document.getElementsByClassName("reference")
         enp.textContent = 'ENP '+(works.reference)
-        const painting = document.createElement('img')
+        console.log(enp)
+        const painting = document.getElementsByTagName('img')
         painting.src = works.image_url
 
         artContainer.appendChild(cardContainer)
-        cardContainer.appendChild(paintingContainer)
-        cardContainer.appendChild(infoContainer)
-        infoContainer.appendChild(title)
-        infoContainer.appendChild(artist)
-        infoContainer.appendChild(material) 
-        infoContainer.appendChild(enp)
-        paintingContainer.appendChild(painting)
+        cardContainer.artContainer(paintingContainer) */
+        
     })
 }
 
@@ -137,7 +141,9 @@ function artistInput(myObject, what){
         input.type = "checkbox";
         txt = document.createTextNode(myObject[number].name + '  ('+myObject[number].count+')');
         input.value = myObject[number].id;
+        input.name = myObject[number].name;
         myDiv.appendChild(formcheck);
+        /* formcheck.appendChild(input); */
         formcheck.appendChild(label);
         label.appendChild(input)
         label.appendChild(txt);
@@ -147,14 +153,25 @@ function artistInput(myObject, what){
         } else if (what == 'material') {
             inputArrayMaterial.push(input);
         }
+        // console.log(input.checked);
     }
 }
 
 // to extract which artists are checked
 function showMeAll() {
     var newpage = button.getAttribute('mycurrentpage')
-    
+    // var startidx = newpage.indexOf('filter%5Bartist_id%5D=')
+    // var substring = newpage.slice(startidx, -1)
+    // var lastidx = substring.indexOf('&')
+    // substring = substring.slice(0, lastidx)
+    // console.log('original ', newpage)
+    // console.log('idx where filter[artist_id] starts', startidx)
+    // console.log('to delete: ', substring)
+    // newpage = newpage.replace(substring,'')
+    // console.log('new', newpage)
+
     // check if there is any filter
+
     if (newpage.includes('?')) {
         newpage = newpage +'&filter[artist_id]='
     } else {
@@ -167,6 +184,7 @@ function showMeAll() {
         if (x.checked) {
             artistList = artistList + x.value+ ","
             artistcount = artistcount + 1
+            // console.log('The value is ', x.value)
         }
     }
     newpage = newpage + artistList
@@ -184,6 +202,7 @@ function showMeAll() {
         if (x.checked) {
             materialList = materialList + x.value+ ","
             materialcount = materialcount + 1
+            // console.log('The value is ', x.value)
         }
     }
     newpage = newpage + materialList
@@ -206,15 +225,19 @@ function showMeAll() {
 // update of all button information from api-links
 function updateAll(info, button){
     button.setAttribute('mycurrentpage', info.meta.full_path);
+    // if (button.getAttribute('mycurrentpage').search('page=') < 0) {
+        // button.setAttribute('mycurrentpage', info.meta.path+'?page=1');
+    // }
     button.setAttribute('firstpage', info.links.first);
     button.setAttribute('nextpage', info.links.next);
     button.setAttribute('prevpage', info.links.prev);
     button.setAttribute('lastpage', info.links.last);
     button.setAttribute('lastpainting', info.meta.to);
     button.setAttribute('totalnumber', info.meta.total);
+    // console.log(button.getAttribute('mycurrentpage'))
 };
 
-//Function show chekboxes
+
 function showCheckboxes(what) {
     if (what == 'artist') {
         var checkboxesArtist = document.getElementById("checkboxesArtist");
@@ -225,6 +248,8 @@ function showCheckboxes(what) {
             checkboxesArtist.style.display = "none";
             expandedArtist = false;
         }
+
+
     } else if (what == 'material') {
         var checkboxesMaterial = document.getElementById("checkboxesMaterial");
         if (!expandedMaterial) {
@@ -247,11 +272,14 @@ request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
 request.onload = function() {  
     // Begin accessing JSON data here 
     var info = JSON.parse(this.response)
+   
     updateAll(info, button)
     var myArtist = info.filterdata.artists
     var myMaterial = info.filterdata.materials
+    // console.log('in request '+ button.getAttribute('firstpage'))
     if (request.status >= 200 && request.status < 400) {
         infoData(info);
+        // console.log('in request', info.filterdata.artists);
         artistInput(myArtist, 'artist');
         artistInput(myMaterial, 'material');
     } else {
@@ -282,7 +310,6 @@ button.addEventListener('click', function(event){
 
 
     
-
 
 
 

@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Page Title -->
+    <title>Friedlander</title>    
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="5WTTWlsnFjlInUo8iSyxD7M2FcNdJoKghy1g9dcK">
+
+    
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://friedlander.kikirpa.be/css/fe.css" rel="stylesheet">
+    
+    <!-- For page-related resources -->
+    
+<style>
+
+/* Select dropdown checkbox style coming from the Friedlander Front-end */
+.cardContainer {
+    height: 320px;
+}
+.multiselect {
+    width: 176px;
+}
+
+.selectBox {
+    position: relative;
+}
+
+.selectBox select {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 5px;
+} 
+
+.overSelect {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+#checkboxesArtist {
+    display: none;
+}
+
+#checkboxesMaterial {
+    display: none;
+}
+
+/* TopButton style coming from the Friedlander Front-end  */
+#topButton{
+    display: none;
+    position: fixed;
+    bottom: 87px;
+    right: 20px;
+    z-index: 99;
+    border: none;
+    outline: none; 
+    background-color: #212529;
+    color: #eeeeee;
+    cursor: pointer;
+    border-radius: 20%;
+    padding: 10px;
+}
+/* Plus&Minus Buttons */
+.buttons{
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+}
+.fa-plus {
+    color: #212529;
+}
+.fa-minus {
+    color: #212529;
+}
+
+
+/* Bootstrap Style */
+
+.paintingContainer {
+    height: 200px;
+    line-height: 196px;
+    text-align: center;
+}
+
+.paintingContainer img {
+    max-height: 200px;
+}
+
+span.artist {
+    margin-top: 3px;
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+}
+
+span.material {
+    margin-top: 0px;
+    display: block;
+    font-size: 10px;
+    display: inline-block;
+    position: relative;
+    float: right;
+}
+
+span.reference {
+    margin-top: 15px;
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+span.title {
+    margin-left: 5px;
+    font-size: 13px;
+    margin-top: 0px;
+    display: block;
+    position: relative;
+}
+
+.form-check {
+    /* margin-top: -20px; */
+    margin-left: 5px;
+}
+
+</style>
+</head>
+
+<body>
+<div id="app">
+    <div style="background-color: #f33c3c;">
+        <div class="container text-right  text-white">
+            <small>
+                <a href="http://xv.kikirpa.be/centre/" class="text-white">Centre for the Study of the Flemish Primitives</a> |
+                <a href="http://www.kikirpa.be/EN/" class="text-white">Royal Institute for Cultural Heritage (KIK-IRPA)</a>
+            </small>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+            <div class="container">
+                <a class="navbar-brand" href="https://friedlander.kikirpa.be">
+                    Friedlander
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav mr-auto ml-5">
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://friedlander.kikirpa.be">Home</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://friedlander.kikirpa.be/artists">Artists</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://friedlander.kikirpa.be/works">Works</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://friedlander.kikirpa.be/locations">Locations</a>
+                        </li>                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://friedlander.kikirpa.be/cities">Cities</a>
+                        </li>                        
+                    </ul>                    
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="">API</a>
+                        </li>
+
+                        <!-- Authentication Links -->
+                                                
+                                            </ul>
+                </div>
+            </div>
+    </nav>
+
+        <main class="py-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-3">
+                        <form id="searchPaintings">
+                            <!-- <i class="fas fa-search"></i> -->
+                            <input type="text" placeholder="Search Title"><br/>
+                            <button id="btn">Search</button>
+                        </form>
+                        <p>Your filters<br/>
+                            <small>
+                                <span class="badge badge-info">title: virgin&nbsp;&nbsp;<i class="fas fa-times"></i></span>
+                                <span class="badge badge-warning">painter: nico</span>
+                                <span class="badge badge-warning">painter: amalia</span>
+                            </small>    
+                        </p>
+                        <!-- Artists<br/>
+                        <input type="text" id="description"><br/><br/> -->
+                        <form>
+                            <div class="multiselect">
+                                <div class="selectBox" onclick="showCheckboxes('artist')">
+                                    <select>
+                                        <option>Artists</option>
+                                    </select>
+                                    <div class="overSelect"></div>
+                                </div>
+                                <div id="checkboxesArtist"></div>
+                            </div>
+                        </form>
+                        <form>
+                            <div class="multiselect">
+                                <div class="selectBox" onclick="showCheckboxes('material')">
+                                    <select>
+                                        <option>Materials</option>
+                                    </select>
+                                    <div class="overSelect"></div>
+                                </div>
+                                <div id="checkboxesMaterial"></div>
+                            </div>
+                        </form>
+                        <button id="getButton" onclick="showMeAll()">Get</button>
+                        <!-- Buttons "plus&minus" and "topButton" -->
+                        <div class="buttons">
+                            <button onclick="addsubOne('minus')" id="minusButton" title="-">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button onclick="addsubOne('plus')" id="plusButton" title="+">
+                                <i class="fas fa-plus"></i>
+                            </button>   
+                        </div>
+                        <button onclick="topFunction()" id="topButton" title="to the top">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <!-- <div class="form-check" id="artists"> -->
+                            <!-- <label class="form-check-label" for="artist_1">
+                                <input class="form-check-input artist_option" type="checkbox" id="artist_1"value="1" name="artists">Nico 
+                                <small class="text-secondary">(15)</small>
+                            </label><br/>
+                            <label class="form-check-label" for="artist_2">                    
+                                <input class="form-check-input artist_option" type="checkbox" value="2" id="artist_2" name="artists">Amalia
+                                <small class="text-secondary">(8)</small>
+                            </label><br/>
+                            <label class="form-check-label" for="artist_3">          
+                                <input class="form-check-input artist_option" type="checkbox" value="3" id="artist_3" name="artists">Katrijn
+                                <small class="text-secondary">(2)</small>
+                            </label><br/> -->
+                        <!-- </div> -->
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="card-columns">
+                            <div id="artContainer"></div>
+                        </div>                            
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-7">
+                    <h3>About</h3>
+                    <p>The Friedländer Database is an online specialist database on Early Netherlandish Paintings.</p>
+                    <p>It is maintained by
+                    the <a href="http://xv.kikirpa.be/centre/">Centre for the Study of the Flemish Primitives</a>,<br/>
+                    a department of <a href="http://www.kikirpa.be/EN/">Royal Institute for Cultural Heritage (KIK-IRPA)</a>.
+                    </p>
+                </div>
+                <div class="col-md-5">
+                    <h3>Contact info</h3>
+                    <p>
+                        <a href="mailto:infoxv@kikirpa.be">infoxv@kikirpa.be</a>&nbsp;<span style="color:#f33c3c">|</span>
+                        <a href="tel:+32-2-739-68-66">+32 2 739 68 66</a>&nbsp;<span style="color:#f33c3c">|</span>
+                        Jubelpark 1, 1000 Brussels, Belgium
+                    </p>
+                    <p>
+                        Some legal info can come here
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src='mainTwo.js'></script>
+
+</body>
+</html>
