@@ -94,7 +94,20 @@ function checkboxInput(myObject, what){
         } else if (what == 'material') {
             inputArrayMaterial.push(input);
         }
-    }    
+    }
+    
+    //Function to set the for label attribute and id input
+    function labelInputForId(){
+        label = document.getElementsByTagName('label'),
+        input = document.getElementsByTagName('input');
+    
+        for(i=0; i<label.length; i++){
+            label[i].htmlFor = "artist_ " + (i + 1);
+            input[i].id = "artist_ " + (i);
+            console.log (label[i].htmlFor)
+        }
+    }
+    labelInputForId()
 }
 
 //Function to display the checkboxlist
