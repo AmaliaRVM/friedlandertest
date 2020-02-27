@@ -4,7 +4,6 @@ const mainContainer = document.getElementById('mainContainer')
 const mainSearch = document.getElementById('mainSearch')
 const artContainer = document.getElementById('artContainer')
 const formcheck = document.getElementById('artists')
-
 //FUNCTIONS to create the elements contained in the artistContainer
 
 //Function to create the cardContainer and elements inside the cardContainer
@@ -66,18 +65,21 @@ function checkboxInput(myObject, what){
     } else if (what == 'material') {
         inputArrayMaterial = [];
     }
+    i = 1
     for(number in myObject)  {
         var formcheck = document.createElement("div");
         formcheck.setAttribute('class', 'form-check');
         label = document.createElement('label');
         label.setAttribute('class', "form-check-label");
-        label.setAttribute('for', ' ')
+        label.setAttribute('for', what+'_'+i)
         input = document.createElement('input');
         input.setAttribute('class', "form-check-input artist_option");
-        input.setAttribute('id', ' ');
+        input.setAttribute('id', what+"_"+i);
+        i = i + 1;
         input.type = "checkbox";
-        input.name = "artists";
+        input.name = myObject[number].name;
         input.value = myObject[number].id;
+        input.addEventListener("click", getArtists);
         labelText = document.createTextNode(myObject[number].name);
         small = document.createElement("small");
         small.setAttribute('class', 'text-secundary');
@@ -95,43 +97,34 @@ function checkboxInput(myObject, what){
             inputArrayMaterial.push(input);
         }
     }
-    
-    //Function to set the for label attribute and id input
-    function labelInputForId(){
-        label = document.getElementsByTagName('label'),
-        input = document.getElementsByTagName('input');
-    
-        for(i=0; i<label.length; i++){
-            label[i].htmlFor = "artist_ " + (i + 1);
-            input[i].id = "artist_ " + (i);
-            console.log (label[i].htmlFor)
-        }
-    }
-    labelInputForId()
-}
 
-//Function to display the checkboxlist
-function showCheckboxes(what) {
-    if (what == 'artist') {
-        var checkboxesArtist = document.getElementById("checkboxesArtist");
-        if (!expandedArtist) {
-            checkboxesArtist.style.display = "block";
-            expandedArtist = true;
-        } else {
-            checkboxesArtist.style.display = "none";
-            expandedArtist = false;
+    //Function onclick and add tag from selected item
+    function getArtists() {
+        const yourFilters = document.getElementById('your-filters')
+        var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+
+        var elem = document.getElementsByClassName('badge badge-warning');
+        var myoriglen = elem.length
+        for (myi = 0;  myi < myoriglen; myi++) {
+                elem[0].parentNode.removeChild(elem[0])
+        }   
+
+        for (var i =0; i<checkboxes.length; i++) {
+            var artist = checkboxes[i].name
+            var span = document.createElement('span')
+            span.setAttribute('class', 'badge badge-warning')
+            if (checkboxes[i].id.includes("artist")) {
+                var tag = document.createTextNode('painter: '+artist);
+            } else if (checkboxes[i].id.includes("material")){
+                var tag = document.createTextNode('material: '+artist);
+            }
+            yourFilters.appendChild(span);
+            span.appendChild(tag);
         }
-    } else if (what == 'material') {
-        var checkboxesMaterial = document.getElementById("checkboxesMaterial");
-        if (!expandedMaterial) {
-            checkboxesMaterial.style.display = "block";
-            expandedMaterial = true;
-        } else {
-            checkboxesMaterial.style.display = "none";
-            expandedMaterial = false;
-        }
+        
+        showMeAll()
     }
-}
+} 
 
 //Function to extract which artists/materials are checked
 function showMeAll() {
@@ -168,33 +161,33 @@ function showMeAll() {
     }
     newpage = newpage + materialList
 
-    cleanUp();
-    request.open('GET', newpage, true)
+    cleanUp(0);
+    request2.open('GET', newpage, true)
     // Send request
-    request.send()
-    if (materialcount < 11) { 
-        checkboxesMaterial.style.display = "block";
-        expandedMaterial = true;
-    }
-    if (artistcount < 11) {
-        checkboxesArtist.style.display = "block";
-        expandedArtist = true;
-    } 
+    request2.send()
 }
 
-//FUNCTIONS, REQUEST and SEARCH FORM to handle all the api endpoints
+
+//cleanUp, updateAll, searchBarFunction Functions and Requests 
 
 
-//Function to update
-function cleanUp(){
+//Function to clean up and update
+function cleanUp(deleteAll){
     var elem = document.getElementsByClassName('card p-2 mx-1 cardContainer');
     var myoriglen = elem.length
     for (myi = 0;  myi < myoriglen; myi++) {
         elem[0].parentNode.removeChild(elem[0])}
     var elem = document.getElementsByClassName('form-check');
     myoriglen = elem.length
-    for (myi = 0;  myi < myoriglen; myi++) {
-        elem[0].parentNode.removeChild(elem[0])}
+    if (deleteAll > 0) {
+        for (myi = 0;  myi < myoriglen; myi++) {
+            elem[0].parentNode.removeChild(elem[0])}
+        var elem = document.getElementsByClassName('badge badge-warning');
+        var myoriglen = elem.length
+        for (myi = 0;  myi < myoriglen; myi++) {
+            elem[0].parentNode.removeChild(elem[0])
+        }   
+    }
 }
 
 //Function update of all button information from api-links
@@ -216,7 +209,7 @@ request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
 request.onload = function() {  
     // Begin accessing JSON data here 
     var info = JSON.parse(this.response)
-    updateAll(info,button)
+    updateAll(info, button)
     var myArtist = info.filterdata.artists
     var myMaterial = info.filterdata.materials
     
@@ -228,24 +221,76 @@ request.onload = function() {
     } else {
         console.log('error')
     }
+}
+
+//Second Request for the items list
+var request2 = new XMLHttpRequest()
+
+request2.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
+
+request2.onload = function() {  
+    // Begin accessing JSON data here 
+    var info = JSON.parse(this.response)
+    updateAll(info, button)
+    if (request.status >= 200 && request.status < 400) {
+        infoData(info);    
+    } else {
+        console.log('error')
+    }
 }  
 // Send request
 request.send()
 
+
 //Search Form
 const searchBar = document.querySelector("input");
 const button = document.getElementById("btn");
+const title = document.getElementsByTagName('');
 button.setAttribute('mycurrentpage', 'https://friedlander.kikirpa.be/api/v1/works?page=1' )
 
-button.addEventListener('click', function(event){
+var searchItemList = []; 
+button.addEventListener('click', searchBarFunction)
+
+// Function to be called when search button is clicked
+function searchBarFunction(event){
     event.preventDefault();
     // clean content of page
-    cleanUp()
-    request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchBar.value, true)
-    console.log(request)
+    cleanUp(1)
+    searchItemList.push(searchBar.value)
+    buildSearchItemDisplay()
+}
+
+function buildSearchItemDisplay(){
+    var searchString = searchItemList.join(',')
+    cleanUp(1)
+    request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchString, true)
+    //Get the searchBar value for title tag in Your Filter
+    const yourFilters = document.getElementById('your-filters')
+    var elem = document.getElementsByClassName('badge badge-info');
+        var myoriglen = elem.length
+        for (myi = 0;  myi < myoriglen; myi++) {
+                elem[0].parentNode.removeChild(elem[0])
+        }   
+
+    for (index in searchItemList) {
+        item = searchItemList[index]
+        span = document.createElement('span');
+        span.setAttribute('class', 'badge badge-info');
+        icon = document.createElement('i');
+        icon.setAttribute('class', 'fas fa-times');
+        icon.setAttribute('name', item);
+        const textTitle = document.createTextNode('title: '+item+" ");
+        yourFilters.appendChild(span);
+        span.appendChild(textTitle);
+        icon.addEventListener('click', function() {
+            searchItemList = searchItemList.filter(letter => letter != this.getAttribute('name'))
+            buildSearchItemDisplay();
+        })
+        span.appendChild(icon);
+    }
     // Send request
-    request.send()   
-})
+    request.send()
+}
 
 //BUTTONS functions
 
@@ -267,7 +312,7 @@ function addsubOne(what) {
     wholepath = button.getAttribute('nextpage')
     
     // Clean content of page 
-    cleanUp()
+    cleanUp(0)
     // get the new api url    
     request.open('GET',num, true)
     request.send() 

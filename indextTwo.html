@@ -33,33 +33,6 @@
 .multiselect {
     width: 176px;
 }
-
-.selectBox {
-    position: relative;
-}
-
-.selectBox select {
-    width: 100%;
-    margin-bottom: 20px;
-    padding: 5px;
-} 
-
-.overSelect {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-}
-
-#checkboxesArtist {
-    display: none;
-}
-
-#checkboxesMaterial {
-    display: none;
-}
-
 /* TopButton style coming from the Friedlander Front-end  */
 #topButton{
     display: none;
@@ -205,37 +178,26 @@ span.title {
                             <button id="btn">Search</button>
                         </form>
                         <p>Your filters<br/>
-                            <small>
-                                <span class="badge badge-info">title: madonna&nbsp;&nbsp;<i class="fas fa-times"></i></span>
-                                <span class="badge badge-warning">painter: Jan Gossaert</span>
-                                <span class="badge badge-warning">painter: Joos van Cleve</span>
+                            <small id="your-filters">
+                                <!-- <span class="badge badge-info">&nbsp;&nbsp;<i class="fas fa-times"></i></span> -->
+                                <!-- <span class="badge badge-warning">painter: Jan Gossaert</span>
+                                <span class="badge badge-warning">painter: Joos van Cleve</span> -->
                             </small>    
                         </p>
                         <!-- Artists<br/>
                         <input type="text" id="description"><br/><br/> -->
                         <form>
                             <div class="multiselect">
-                                <div class="selectBox" onclick="showCheckboxes('artist')">
-                                    <select>
-                                        <option>Artists</option>
-                                    </select>
-                                    <div class="overSelect"></div>
-                                </div>
+                                <h5>Artists</h5>
                                 <div id="checkboxesArtist"></div>
                             </div>
                         </form>
                         <form>
                             <div class="multiselect">
-                                <div class="selectBox" onclick="showCheckboxes('material')">
-                                    <select>
-                                        <option>Materials</option>
-                                    </select>
-                                    <div class="overSelect"></div>
-                                </div>
+                                <h5>Materials</h6>
                                 <div id="checkboxesMaterial"></div>
                             </div>
                         </form>
-                        <button id="getButton" onclick="showMeAll()">Get</button>
                         <!-- Buttons "plus&minus" and "topButton" -->
                         <div class="buttons">
                             <button onclick="addsubOne('minus')" id="minusButton" title="-">
