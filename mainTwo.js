@@ -170,7 +170,6 @@ function showMeAll() {
 
 //cleanUp, updateAll, searchBarFunction Functions and Requests 
 
-
 //Function to clean up and update
 function cleanUp(deleteAll){
     var elem = document.getElementsByClassName('card p-2 mx-1 cardContainer');
