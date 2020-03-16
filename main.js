@@ -7,7 +7,24 @@ const formcheck = document.getElementById('artists')
 
 //FUNCTIONS to create the elements contained in the artistContainer
 
+
+    /* Banner elements */
+function makeBanner(info) {
+    try {
+        var elem = document.getElementById('total-results')[0]
+        elem.parentNode.removeChild(elem)
+    } catch(err) {
+        console.log(err)
+    }
+    
+    totalResults = document.getElementById('total-results')
+    totalResults.textContent = info.meta.total
+    console.log("total is: "+info.meta.total)
+} 
+    
+
 //Function to create the cardContainer and elements inside the cardContainer
+
 function addContentToArtContainer(cardContainer, works) {
     /* Modal Elements */
     modal = document.createElement('div')
@@ -249,6 +266,7 @@ request.onload = function() {
     var myMaterial = info.filterdata.materials
     
     if (request.status >= 200 && request.status < 400) {
+        makeBanner(info);
         infoData(info);
         checkboxInput(myArtist, 'artist');
         checkboxInput(myMaterial, 'material');
@@ -267,8 +285,10 @@ request2.onload = function() {
     // Begin accessing JSON data here 
     var info = JSON.parse(this.response)
     updateAll(info, button)
+
     if (request.status >= 200 && request.status < 400) {
-        infoData(info);    
+        makeBanner(info);
+        infoData(info); 
     } else {
         console.log('error')
     }
