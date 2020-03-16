@@ -33,7 +33,7 @@
 .multiselect {
     width: 176px;
 }
-/* TopButton style coming from the Friedlander Front-end  */
+/* TopButton and bottomButton style coming from the Friedlander Front-end  */
 #topButton{
     display: none;
     position: fixed;
@@ -42,7 +42,20 @@
     z-index: 99;
     border: none;
     outline: none; 
-    background-color: #212529;
+    background-color: #465361;
+    color: #eeeeee;
+    cursor: pointer;
+    border-radius: 20%;
+    padding: 10px;
+}
+#bottomButton{
+    position: fixed;
+    top: 87px;
+    right: 20px;
+    z-index: 99;
+    border: none;
+    outline: none; 
+    background-color: #465361;
     color: #eeeeee;
     cursor: pointer;
     border-radius: 20%;
@@ -55,10 +68,10 @@
     right: 15px;
 }
 .fa-plus {
-    color: #212529;
+    color: #465361;
 }
 .fa-minus {
-    color: #212529;
+    color: #465361;
 }
 
 
@@ -208,7 +221,10 @@ span.title {
                             </button>   
                         </div>
                         <button onclick="topFunction()" id="topButton" title="to the top">
-                            <i class="fas fa-arrow-up"></i>
+                            <i class="fas fa-sort-up"></i>
+                        </button>
+                        <button onclick="bottomFunction()" id="bottomButton" title="to the bottom">
+                            <i class="fas fa-sort-down"></i>
                         </button>
                         <!-- <div class="form-check" id="artists"> -->
                             <!-- <label class="form-check-label" for="artist_1">
@@ -264,6 +280,10 @@ span.title {
     </footer>
 
     <script src='main.js'></script>
+    <!-- App scripts -->
+    <script src="https://friedlander.kikirpa.be/vendor/jquery/dist/jquery.min.js"></script>
+    <script src="https://friedlander.kikirpa.be/vendor/jquery/dist/jquery.slimscroll.min.js"></script>
+    <script src="https://friedlander.kikirpa.be/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
 
 </body>
 </html>

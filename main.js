@@ -4,10 +4,46 @@ const mainContainer = document.getElementById('mainContainer')
 const mainSearch = document.getElementById('mainSearch')
 const artContainer = document.getElementById('artContainer')
 const formcheck = document.getElementById('artists')
+
 //FUNCTIONS to create the elements contained in the artistContainer
 
 //Function to create the cardContainer and elements inside the cardContainer
 function addContentToArtContainer(cardContainer, works) {
+    /* Modal Elements */
+    modal = document.createElement('div')
+    modal.setAttribute('class','modal')
+    modal.setAttribute('id', 'mymodal'+ works.id)
+    modalDialog = document.createElement('div')
+    modalDialog.setAttribute('class', 'modal-dialog')
+    modalContent = document.createElement('div')
+    modalContent.setAttribute('class', 'modal-content')
+    modalHeader = document.createElement('div')
+    modalHeader.setAttribute('class', 'modal-header')
+    modalBody = document.createElement('div')
+    modalBody.setAttribute('class', 'modal-body')
+    modalBody.textContent = works.artist
+    modalTitle = document.createElement('h2')
+    modalTitle.setAttribute('class', 'modal-title')
+    modalTitle.textContent = works.title
+    modalButton = document.createElement('button')
+    modalButton.setAttribute('class', 'close')
+    modalButton.setAttribute('type', 'button')
+    modalButton.setAttribute('data-dismiss', 'modal')
+    modalButton.textContent = "x"
+    var link = document.createElement('a')
+    link.setAttribute('href', '#')
+    link.setAttribute('data-toggle', 'modal')
+    link.setAttribute('data-target', '#mymodal'+ works.id)
+    artContainer.appendChild(link);
+    artContainer.appendChild(modal)
+    modal.appendChild(modalDialog)
+    modalDialog.appendChild(modalContent)
+    modalContent.appendChild(modalHeader)
+    modalContent.appendChild(modalBody)
+    modalHeader.appendChild(modalTitle)
+    modalHeader.appendChild(modalButton)
+    link.appendChild(cardContainer);
+    /* Elements within the cardContainer */
     const paintingContainer = document.createElement('div')
     paintingContainer.setAttribute ('class', 'paintingContainer')
     cardContainer.appendChild(paintingContainer)
@@ -317,21 +353,29 @@ function addsubOne(what) {
     request.send() 
 }
 
-//Top Button Function
+//Top and Bottom Button Function
 const topButton = document.getElementById("topButton")
-window.onscroll = function () {scrollFunction()};
+const bottomButton = document.getElementById("bottomButton")
+window.onscroll = function () {
+    scrollFunction()
+};
 
 function scrollFunction() {
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        topButton.style.display = "block"
-    } else {
+        topButton.style.display = "block";
+    } else if (document.body.scrollTop < 20 || document.documentElement.scrollTop < 20) {
+        bottomButton.style.display = "block";
         topButton.style.display = "none";
-    }
+    } 
 }
 
 function topFunction() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+}
+
+function bottomFunction() {
+    window.scrollTo(0, document.body.scrollHeight);
 }
 
 
