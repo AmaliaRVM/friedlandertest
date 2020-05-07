@@ -1,4 +1,5 @@
 //Root & main Containers
+const baseUrl = 'https://friedlander.kikirpa.be';
 const app = document.getElementById('app')
 const mainContainer = document.getElementById('mainContainer')
 const mainSearch = document.getElementById('mainSearch')
@@ -256,7 +257,7 @@ function updateAll(info, button){
 //First Request
 var request = new XMLHttpRequest()
 
-request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
+request.open('GET', baseUrl+'/api/v1/works', true)
 
 request.onload = function() {  
     // Begin accessing JSON data here 
@@ -279,7 +280,7 @@ request.onload = function() {
 //Second Request for the items list
 var request2 = new XMLHttpRequest()
 
-request2.open('GET', 'https://friedlander.kikirpa.be/api/v1/works', true)
+request2.open('GET', baseUrl+'/api/v1/works', true)
 
 request2.onload = function() {  
     // Begin accessing JSON data here 
@@ -301,7 +302,7 @@ request.send()
 const searchBar = document.querySelector("input");
 const button = document.getElementById("btn");
 const title = document.getElementsByTagName('');
-button.setAttribute('mycurrentpage', 'https://friedlander.kikirpa.be/api/v1/works?page=1' )
+button.setAttribute('mycurrentpage', baseUrl+'/api/v1/works?page=1' )
 
 var searchItemList = []; 
 button.addEventListener('click', searchBarFunction)
@@ -318,7 +319,7 @@ function searchBarFunction(event){
 function buildSearchItemDisplay(){
     var searchString = searchItemList.join(',')
     cleanUp(1)
-    request.open('GET', 'https://friedlander.kikirpa.be/api/v1/works?filter[title]='+searchString, true)
+    request.open('GET', baseUrl+'/api/v1/works?filter[title]='+searchString, true)
     //Get the searchBar value for title tag in Your Filter
     const yourFilters = document.getElementById('your-filters')
     var elem = document.getElementsByClassName('badge badge-info');
