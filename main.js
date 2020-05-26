@@ -1,16 +1,55 @@
 //Root & main Containers
-const baseUrl = 'https://friedlander.kikirpa.be';
 const app = document.getElementById('app')
 const mainContainer = document.getElementById('mainContainer')
 const mainSearch = document.getElementById('mainSearch')
 const artContainer = document.getElementById('artContainer')
 const formcheck = document.getElementById('artists')
 
-//FUNCTIONS to create the elements contained in the artistContainer
+//URL variable
+const baseUrl = 'https://friedlander.kikirpa.be';
 
+//Var for the checkboxlist
+var inputArrayArtist = [];
+var inputArrayMaterial = [];
+var expandedArtist = false;
+var expandedMaterial = false;
 
-    /* Banner elements */
-function makeBanner(info) {
+//First Request
+var request = new XMLHttpRequest()
+
+request.open('GET', baseUrl+'/api/v1/works', true)
+
+request.onload = function() {  
+    // Begin accessing JSON data here 
+    var info = JSON.parse(this.response)
+    updateAll(info, button)
+    var myArtist = info.filterdata.artists
+    var myMaterial = info.filterdata.materials
+    
+    if (request.status >= 200 && request.status < 400) {
+        totalNumberResults(info);
+        artContainerTemplate(info);
+        checkboxInput(myArtist, 'artist');
+        checkboxInput(myMaterial, 'material');
+        
+    } else {
+        console.log('error')
+    }
+}
+
+//updateAll function of all button information from api-links
+function updateAll(info, button){
+    button.setAttribute('mycurrentpage', info.meta.full_path);
+    button.setAttribute('firstpage', info.links.first);
+    button.setAttribute('nextpage', info.links.next);
+    button.setAttribute('prevpage', info.links.prev);
+    button.setAttribute('lastpage', info.links.last);
+    button.setAttribute('lastpainting', info.meta.to);
+    button.setAttribute('totalnumber', info.meta.total);
+};
+
+//Total number results
+function totalNumberResults(info) {
     try {
         var elem = document.getElementById('total-results')[0]
         elem.parentNode.removeChild(elem)
@@ -21,139 +60,79 @@ function makeBanner(info) {
     totalResults = document.getElementById('total-results')
     totalResults.textContent = info.meta.total
     console.log("total is: "+info.meta.total)
-} 
-    
-
-//Function to create the cardContainer and elements inside the cardContainer
-
-function addContentToArtContainer(cardContainer, works) {
-    /* Modal Elements */
-    modal = document.createElement('div')
-    modal.setAttribute('class','modal')
-    modal.setAttribute('id', 'mymodal'+ works.id)
-    modalDialog = document.createElement('div')
-    modalDialog.setAttribute('class', 'modal-dialog')
-    modalContent = document.createElement('div')
-    modalContent.setAttribute('class', 'modal-content')
-    modalHeader = document.createElement('div')
-    modalHeader.setAttribute('class', 'modal-header')
-    modalBody = document.createElement('div')
-    modalBody.setAttribute('class', 'modal-body')
-    modalBody.textContent = works.artist
-    modalTitle = document.createElement('h2')
-    modalTitle.setAttribute('class', 'modal-title')
-    modalTitle.textContent = works.title
-    modalButton = document.createElement('button')
-    modalButton.setAttribute('class', 'close')
-    modalButton.setAttribute('type', 'button')
-    modalButton.setAttribute('data-dismiss', 'modal')
-    modalButton.textContent = "x"
-    var link = document.createElement('a')
-    link.setAttribute('href', '#')
-    link.setAttribute('data-toggle', 'modal')
-    link.setAttribute('data-target', '#mymodal'+ works.id)
-    artContainer.appendChild(link);
-    artContainer.appendChild(modal)
-    modal.appendChild(modalDialog)
-    modalDialog.appendChild(modalContent)
-    modalContent.appendChild(modalHeader)
-    modalContent.appendChild(modalBody)
-    modalHeader.appendChild(modalTitle)
-    modalHeader.appendChild(modalButton)
-    link.appendChild(cardContainer);
-    /* Elements within the cardContainer */
-    const paintingContainer = document.createElement('div')
-    paintingContainer.setAttribute ('class', 'paintingContainer')
-    cardContainer.appendChild(paintingContainer)
-    const infoContainer = document.createElement('div')
-    infoContainer.setAttribute('class', 'infoContainer')
-    cardContainer.appendChild(infoContainer)
-    const artist = document.createElement('span')
-    artist.setAttribute('class', 'artist')
-    artist.textContent = works.artist
-    infoContainer.appendChild(artist)
-    const material = document.createElement('span')
-    material.setAttribute('class', 'material')
-    material.textContent = works.material
-    infoContainer.appendChild(material)
-    const enp = document.createElement('span')
-    enp.setAttribute('class', 'reference')
-    enp.textContent = 'ENP '+(works.reference)
-    infoContainer.appendChild(enp)
-    const title = document.createElement('span')
-    title.setAttribute('class', 'title')
-    title.textContent = works.title
-    infoContainer.appendChild(title)
-    const painting = document.createElement('img')
-    painting.src = works.image_url
-    paintingContainer.appendChild(painting)
 }
 
-//Function to display elements from the API
-function infoData(myinfo){
-    myinfo.data.forEach(works => {        
-        cardContainer = document.createElement('div')
-        cardContainer.setAttribute('class', 'card p-2 mx-1 cardContainer')
-        artContainer.appendChild(cardContainer)
-        addContentToArtContainer(cardContainer, works)
-    })
+// HTML artContainer Template 
+function artContainerTemplate(myInfo){
+    artContainer.innerHTML =`
+    ${myInfo.data.map(function(works){
+        return `
+        <a href='#' data-toggle="modal" data-target='#mymodal${works.id}'>
+            <div class='card p-2 mx-1 cardContainer'>
+                <div class='paintingContainer'>
+                    <img src='${works.image_url}'>
+                </div>
+                <div class='infoContainer'>
+                    <span class='artist'>${works.artist}</span>
+                    <span class='material'>${works.material}</span>
+                    <span class='reference'>${works.reference}</span>
+                    <span class='title'>${works.title}</span>
+                </div>
+            </div>
+        </a>
+        <div class='modal' id='mymodal${works.id}'>
+            <div class='modal-dialog'>
+                <div class='modal-content'>
+                    <div class='modal-header'>
+                        <h2 class='modal-title'>${works.title}</h2>
+                        <button class='close' type='button' data-dismiss='modal'>x</button>
+                    </div>
+                    <div class='modal-body'>${works.artist}</div>
+                </div>
+            </div>
+        </div>
+        `
+    }).join('')}
+    `
+    //end of Template
 }
 
-//FUNCTIONS to create and display the elements contained in the checkbox list
-
-//Var for the checkboxlist
-var inputArrayArtist = [];
-var inputArrayMaterial = [];
-var expandedArtist = false;
-var expandedMaterial = false;
-
-//Function to generate artist and material checkbox list
+//CheckboxInput function to generate artist and material checkbox list
 function checkboxInput(myObject, what){
     if (what == 'artist') {
         var checkboxDiv = document.getElementById("checkboxesArtist");
     } else if (what == 'material') {
         var checkboxDiv = document.getElementById("checkboxesMaterial");
     }
-    if (what == 'artist') {
-        inputArrayArtist = [];
-    } else if (what == 'material') {
-        inputArrayMaterial = [];
-    }
-    i = 1
-    for(number in myObject)  {
-        var formcheck = document.createElement("div");
-        formcheck.setAttribute('class', 'form-check');
-        label = document.createElement('label');
-        label.setAttribute('class', "form-check-label");
-        label.setAttribute('for', what+'_'+i)
-        input = document.createElement('input');
-        input.setAttribute('class', "form-check-input artist_option");
-        input.setAttribute('id', what+"_"+i);
-        i = i + 1;
-        input.type = "checkbox";
-        input.name = myObject[number].name;
-        input.value = myObject[number].id;
-        input.addEventListener("click", getArtists);
-        labelText = document.createTextNode(myObject[number].name);
-        small = document.createElement("small");
-        small.setAttribute('class', 'text-secundary');
-        smallText = document.createTextNode('  ('+myObject[number].count+')');
-        checkboxDiv.appendChild(formcheck);
-        formcheck.appendChild(label);
-        label.appendChild(input);
-        label.appendChild(labelText);
-        label.appendChild(small);
-        small.appendChild(smallText);
-        
+    //checkbox list HTML Template
+    checkboxDiv.innerHTML=`
+        ${myObject.map(function(art){
+            return `
+            <div class='form-check'>
+                <label class='form-check-label' for='${what+'_'+art.id}'>
+                    <input class='form-check-input artist_opinion' id='${what+'_'+art.id}' 
+                    type='checkbox' name='${art.name}' value='${art.id}'/>
+                    ${art.name}
+                    <small class='text-secundary'>${art.count}</small>
+                </label>
+            </div>   
+        `
+        }).join('')} 
+    `
+    //end of Template
+    for(art in myObject){
+        var input = document.getElementById(what+'_'+myObject[art].id)
+        input.addEventListener('click', function() {getArtists(myObject)})
         if  (what == 'artist') {
             inputArrayArtist.push(input);
         } else if (what == 'material') {
             inputArrayMaterial.push(input);
-        }
-    }
+        } 
+    } 
 
-    //Function onclick and add tag from selected item
-    function getArtists() {
+    //Onclick function to add tag from selected item
+    function getArtists(myObject) {
+        console.log('hello')
         const yourFilters = document.getElementById('your-filters')
         var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
 
@@ -177,7 +156,7 @@ function checkboxInput(myObject, what){
         }
         
         showMeAll()
-    }
+    } 
 } 
 
 //Function to extract which artists/materials are checked
@@ -221,10 +200,7 @@ function showMeAll() {
     request2.send()
 }
 
-
-//cleanUp, updateAll, searchBarFunction Functions and Requests 
-
-//Function to clean up and update
+//cleanUp function to clean up and update
 function cleanUp(deleteAll){
     var elem = document.getElementsByClassName('card p-2 mx-1 cardContainer');
     var myoriglen = elem.length
@@ -243,40 +219,6 @@ function cleanUp(deleteAll){
     }
 }
 
-//Function update of all button information from api-links
-function updateAll(info, button){
-    button.setAttribute('mycurrentpage', info.meta.full_path);
-    button.setAttribute('firstpage', info.links.first);
-    button.setAttribute('nextpage', info.links.next);
-    button.setAttribute('prevpage', info.links.prev);
-    button.setAttribute('lastpage', info.links.last);
-    button.setAttribute('lastpainting', info.meta.to);
-    button.setAttribute('totalnumber', info.meta.total);
-};
-
-//First Request
-var request = new XMLHttpRequest()
-
-request.open('GET', baseUrl+'/api/v1/works', true)
-
-request.onload = function() {  
-    // Begin accessing JSON data here 
-    var info = JSON.parse(this.response)
-    updateAll(info, button)
-    var myArtist = info.filterdata.artists
-    var myMaterial = info.filterdata.materials
-    
-    if (request.status >= 200 && request.status < 400) {
-        makeBanner(info);
-        infoData(info);
-        checkboxInput(myArtist, 'artist');
-        checkboxInput(myMaterial, 'material');
-        
-    } else {
-        console.log('error')
-    }
-}
-
 //Second Request for the items list
 var request2 = new XMLHttpRequest()
 
@@ -288,8 +230,8 @@ request2.onload = function() {
     updateAll(info, button)
 
     if (request.status >= 200 && request.status < 400) {
-        makeBanner(info);
-        infoData(info); 
+        totalNumberResults(info);
+        artContainerTemplate(info); 
     } else {
         console.log('error')
     }
@@ -297,22 +239,21 @@ request2.onload = function() {
 // Send request
 request.send()
 
-
 //Search Form
-const searchBar = document.querySelector("input");
+const searchBox = document.querySelector("input");
 const button = document.getElementById("btn");
 const title = document.getElementsByTagName('');
 button.setAttribute('mycurrentpage', baseUrl+'/api/v1/works?page=1' )
 
 var searchItemList = []; 
-button.addEventListener('click', searchBarFunction)
+button.addEventListener('click', searchBoxFunction)
 
-// Function to be called when search button is clicked
-function searchBarFunction(event){
+// Search box function to be called when search button is clicked
+function searchBoxFunction(event){
     event.preventDefault();
     // clean content of page
     cleanUp(1)
-    searchItemList.push(searchBar.value)
+    searchItemList.push(searchBox.value)
     buildSearchItemDisplay()
 }
 
@@ -320,7 +261,7 @@ function buildSearchItemDisplay(){
     var searchString = searchItemList.join(',')
     cleanUp(1)
     request.open('GET', baseUrl+'/api/v1/works?filter[title]='+searchString, true)
-    //Get the searchBar value for title tag in Your Filter
+    //Get the searchBox value for title tag in Your Filter
     const yourFilters = document.getElementById('your-filters')
     var elem = document.getElementsByClassName('badge badge-info');
         var myoriglen = elem.length
@@ -328,29 +269,36 @@ function buildSearchItemDisplay(){
                 elem[0].parentNode.removeChild(elem[0])
         }   
 
-    for (index in searchItemList) {
-        item = searchItemList[index]
-        span = document.createElement('span');
-        span.setAttribute('class', 'badge badge-info');
-        icon = document.createElement('i');
-        icon.setAttribute('class', 'fas fa-times');
-        icon.setAttribute('name', item);
-        const textTitle = document.createTextNode('title: '+item+" ");
-        yourFilters.appendChild(span);
-        span.appendChild(textTitle);
-        icon.addEventListener('click', function() {
+    //HTML Template
+    yourFilters.innerHTML = `
+        ${searchItemList.map(function(){
+            console.log(searchItemList)
+            item = searchItemList
+            return `
+            <span class='badge badge-info'>
+                ${'title: '+item+' '}
+                <i class='fas fa-times' id='icon' name='${item}'></i>
+            </span>
+            `
+        }).join('')}
+    `
+    //end of Template
+
+    for(index in searchItemList){
+        var icon = document.getElementById('icon');
+        console.log(icon)
+        icon.addEventListener('click', function(){
             searchItemList = searchItemList.filter(letter => letter != this.getAttribute('name'))
             buildSearchItemDisplay();
-        })
-        span.appendChild(icon);
+        } )
     }
     // Send request
     request.send()
 }
 
-//BUTTONS functions
+//BUTTONS FUNCTIONS
 
-//AaddsubOne Function
+//AddsubOne Function
 function addsubOne(what) {
     var num = button.getAttribute('firstpage')
     if ( what == 'plus') {
