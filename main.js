@@ -11,8 +11,6 @@ const baseUrl = 'https://friedlander.kikirpa.be';
 //Var for the checkboxlist
 var inputArrayArtist = [];
 var inputArrayMaterial = [];
-var expandedArtist = false;
-var expandedMaterial = false;
 
 //First Request
 var request = new XMLHttpRequest()
@@ -25,13 +23,12 @@ request.onload = function() {
     updateAll(info, button)
     var myArtist = info.filterdata.artists
     var myMaterial = info.filterdata.materials
-    
+
     if (request.status >= 200 && request.status < 400) {
         totalNumberResults(info);
         artContainerTemplate(info);
         checkboxInput(myArtist, 'artist');
         checkboxInput(myMaterial, 'material');
-        
     } else {
         console.log('error')
     }
@@ -122,7 +119,7 @@ function checkboxInput(myObject, what){
     //end of Template
     for(art in myObject){
         var input = document.getElementById(what+'_'+myObject[art].id)
-        input.addEventListener('click', function() {getArtists(myObject)})
+        input.addEventListener('click', function() {getArtists()})
         if  (what == 'artist') {
             inputArrayArtist.push(input);
         } else if (what == 'material') {
@@ -131,8 +128,7 @@ function checkboxInput(myObject, what){
     } 
 
     //Onclick function to add tag from selected item
-    function getArtists(myObject) {
-        console.log('hello')
+    function getArtists() {
         const yourFilters = document.getElementById('your-filters')
         var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
 
@@ -272,7 +268,6 @@ function buildSearchItemDisplay(){
     //HTML Template
     yourFilters.innerHTML = `
         ${searchItemList.map(function(){
-            console.log(searchItemList)
             item = searchItemList
             return `
             <span class='badge badge-info'>
@@ -286,7 +281,6 @@ function buildSearchItemDisplay(){
 
     for(index in searchItemList){
         var icon = document.getElementById('icon');
-        console.log(icon)
         icon.addEventListener('click', function(){
             searchItemList = searchItemList.filter(letter => letter != this.getAttribute('name'))
             buildSearchItemDisplay();
