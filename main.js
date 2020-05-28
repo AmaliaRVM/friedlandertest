@@ -11,13 +11,21 @@ const baseUrl = 'https://friedlander.kikirpa.be';
 //Var for the checkboxlist
 var inputArrayArtist = [];
 var inputArrayMaterial = [];
+var passedNumber = null;
 
 //First Request
 var request = new XMLHttpRequest()
 
+console.log(window.location.href.split('#')[1])
+passedNumber = window.location.href.split('#')[1]
+if (passedNumber == undefined) {
+    passedNumber = null;
+}
+
 request.open('GET', baseUrl+'/api/v1/works', true)
 
 request.onload = function() {  
+    console.log(request.responseURL)
     // Begin accessing JSON data here 
     var info = JSON.parse(this.response)
     updateAll(info, button)
@@ -28,7 +36,9 @@ request.onload = function() {
         totalNumberResults(info);
         artContainerTemplate(info);
         checkboxInput(myArtist, 'artist');
-        checkboxInput(myMaterial, 'material');
+        //checkboxInput(myMaterial, 'material');
+        tickme(passedNumber);
+        checkboxInput.getArtists();
     } else {
         console.log('error')
     }
@@ -152,7 +162,17 @@ function checkboxInput(myObject, what){
         }
         
         showMeAll()
-    } 
+    }
+    checkboxInput.getArtists = getArtists;
+} 
+
+function tickme(idnumber) {
+    console.log('hello')
+    for (x of inputArrayArtist) {
+        if (x.value == idnumber) {
+            x.checked = true;
+        }
+    }
 } 
 
 //Function to extract which artists/materials are checked
